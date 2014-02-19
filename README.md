@@ -2,6 +2,8 @@
 
 reload wsgi application when code changed, should be used in development enviroment
 
+it uses inotify, so only works on linux
+
 ```sh
 Usage: wsgi-supervisor [options] <file>
 
@@ -17,4 +19,10 @@ Options:
 Examples:
     wsgi-supervisor app.py
     wsgi-supervisor -e js,py -w public/js,controllers app.py
+```
+
+install via pip
+
+```sh
+pip install wsgi-supervisor
 ```
