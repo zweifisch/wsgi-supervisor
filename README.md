@@ -1,6 +1,6 @@
 # wsgi supervisor
 
-reload wsgi application when file changed, should be used in develop-env
+reload wsgi application when code changed, should be used in development enviroment
 
 ```sh
 Usage: wsgi-supervisor [options] <file>

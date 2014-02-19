@@ -2,6 +2,7 @@ from setuptools import setup
 
 setup(
     name='wsgi-supervisor',
+    url='https://github.com/zweifisch/wsgi-supervisor',
     version='0.0.1',
     description='reload wsgi app on file change',
     author='Feng Zhou',
