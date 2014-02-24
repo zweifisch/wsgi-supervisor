@@ -1,17 +1,16 @@
-"""Usage: wsgi-supervisor [options] <file>
+"""Usage: wsgi-supervisor [options] <module:app>
 
 Options:
     -e, --extensions=exts    only file with those extensions will be watched
                              [default: py]
     -w, --watch=folders      folders to watch
-    -a, --app=appname        app name to import [default: app]
-    -d, --pwd=path           path to app folder
+    -c, --cwd=dir            change dir before running app
     -p, --port=port          port to bind [default: 3000]
     --python=python          python excutable [default: python]
 
 Examples:
-    wsgi-supervisor app.py
-    wsgi-supervisor -e js,py -w public/js,controllers app.py
+    wsgi-supervisor wsgi:app
+    wsgi-supervisor -e js,py -w public/js,controllers main:app
 """
 
 import os
@@ -29,17 +28,19 @@ from docopt import docopt
 
 class AppRunner():
 
-    def __init__(self, file_name, app_name, port, pwd, python):
+    def __init__(self, application, port, cwd, python):
+        cwd = os.path.realpath(cwd)
         self.params = [python,
                     os.path.join(os.path.dirname(__file__), 'server.py'),
-                    file_name, app_name, port, pwd]
+                    application, port, cwd]
+        self.cwd = cwd
 
     def respawn(self):
         self.kill()
         self.spawn()
 
     def spawn(self):
-        self.ps = Popen(self.params)
+        self.ps = Popen(self.params, cwd=self.cwd)
 
     def kill(self):
         self.ps.kill()
@@ -107,16 +108,15 @@ def get_time():
     return datetime.now().strftime("%a, %d-%b-%Y %H:%M:%S ")
 
 
-args = docopt(__doc__, version='0.0.1')
+args = docopt(__doc__, version='0.0.2')
 
 exts = [e if e.startswith('.') else '.' + e
         for e in args['--extensions'].split(',')]
 
 app_runner = AppRunner(
-    file_name=args['<file>'],
-    app_name=args['--app'],
+    application=args['<module:app>'],
     python=args['--python'],
-    pwd=args['--pwd'] or os.getcwd(),
+    cwd=args['--cwd'] or os.getcwd(),
     port=args['--port'],
 )
 supervisor = Supervisor(app_runner)

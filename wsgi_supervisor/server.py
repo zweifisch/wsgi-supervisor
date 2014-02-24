@@ -1,15 +1,12 @@
-import os
 import sys
 from importlib import import_module
 from wsgiref.simple_server import make_server
 
-_, module_path, app_name, port, pwd = sys.argv
+_, application, port, cwd = sys.argv
 
-if module_path.endswith('.py'):
-    module_path = module_path[:-3]
-module_path = module_path.replace(os.path.sep, '.')
+module_path, app_name = application.split(':')
 
-sys.path.append(pwd)
+sys.path.append(cwd)
 
 module = import_module(module_path)
 
